@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    # Log the variables
+    - name: Log variables apache_package and php_package
+      ansible.builtin.debug:
+        msg: |
+          apache_package is set to: {{ apache_package }}
+
+          php_package is set to: {{ php_package }}
+
+    # ***** Centos Distibution *****
+    # ! Version 3 => adding variables
+    - name: Install Apache and php
+      ansible.builtin.package:
+        name:
+          - "{{ apache_package }}"
+          - "{{ php_package }}"
+        state: latest
+        update_cache: yes

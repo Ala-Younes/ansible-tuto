@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    # ***** Centos Distibution *****
+    - name: Update Repo Index
+      ansible.builtin.apt:
+        update_cache: yes
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    - name: Install Apche2 Package
+      ansible.builtin.apt:
+        name: apache2
+        state: latest
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    - name: Add Php Support For Apache
+      ansible.builtin.apt:
+        name: libapache2-mod-php
+        state: latest
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    # ***** Centos Distibution *****
+    - name: Update Repo Index
+      ansible.builtin.dnf:
+        update_cache: yes
+      when: ansible_distribution == "CentOS"
+
+    - name: Install httpd Package
+      ansible.builtin.dnf:
+        name: httpd
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: Add Php Support For Apache
+      ansible.builtin.dnf:
+        name: php
+        state: latest
+      when: ansible_distribution == "CentOS"

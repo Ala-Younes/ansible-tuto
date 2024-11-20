@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    # ***** Centos Distibution *****
+    # ! Version 2 -> Add the update_cache option
+    - name: Install Apche2 and php Packages for [Debiand and Ubuntu]
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
+        update_cache: yes
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    # ***** Centos Distibution *****
+    # ! Version 2 -> Add the update_cache option
+    - name: Install httpd and php Packages For CentOs
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - php
+        state: latest
+        update_cache: yes
+      when: ansible_distribution == "CentOS"

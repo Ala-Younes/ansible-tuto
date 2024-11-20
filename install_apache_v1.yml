@@ -8,15 +8,11 @@
         update_cache: yes
       when: ansible_distribution in ["Debian", "Ubuntu"]
 
-    - name: Install Apche2 Package
+    - name: Install Apche2 and php Packages for [Debiand and Ubuntu]
       ansible.builtin.apt:
-        name: apache2
-        state: latest
-      when: ansible_distribution in ["Debian", "Ubuntu"]
-
-    - name: Add Php Support For Apache
-      ansible.builtin.apt:
-        name: libapache2-mod-php
+        name:
+          - apache2
+          - libapache2-mod-php
         state: latest
       when: ansible_distribution in ["Debian", "Ubuntu"]
 
@@ -26,14 +22,10 @@
         update_cache: yes
       when: ansible_distribution == "CentOS"
 
-    - name: Remove Apche2 Package
+    - name: Install httpd and php Packages For CentOs
       ansible.builtin.dnf:
-        name: httpd
-        state: latest
-      when: ansible_distribution == "CentOS"
-
-    - name: Remove Php Support For Apache
-      ansible.builtin.dnf:
-        name: php
+        name:
+          - httpd
+          - php
         state: latest
       when: ansible_distribution == "CentOS"
