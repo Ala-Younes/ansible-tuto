@@ -20,6 +20,14 @@
           - libapache2-mod-php
         state: latest
       when: ansible_distribution == "Ubuntu"
+    - name: Copy Default html File For Site
+      tags: apache, apache2
+      ansible.builtin.copy:
+        src: files/default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: 0644
 
 - hosts: db_servers
   become: true
