@@ -1,0 +1,42 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+    - name: install updates (Ubuntu)
+      tags: always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks:
+    - name: Install apache And php For Ubuntu Servers
+      tags: apache,apache2,ubuntu
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: db_servers
+  become: true
+  tasks:
+    - name: Install mariadb package (Ubuntu)
+      tags: mariadb,db,ubuntu
+      ansible.builtin.apt:
+        name:
+          - mariadb-server
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks:
+    - name: Install samba Package
+      tags: samba,file,ubuntu
+      ansible.builtin.package:
+        name: samba
+        state: latest
