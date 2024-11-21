@@ -20,6 +20,15 @@
           - libapache2-mod-php
         state: latest
       when: ansible_distribution == "Ubuntu"
+
+    - name: start apache2
+      tags: apache
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: true
+      when: ansible_distribution == "Ubuntu"
+
     - name: Copy Default html File For Site
       tags: apache, apache2
       ansible.builtin.copy:
