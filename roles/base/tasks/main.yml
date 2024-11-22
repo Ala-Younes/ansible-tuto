@@ -1,0 +1,4 @@
+- name: Add ssh Key For Simone
+  ansible.builtin.authorized_key:
+    user: simone
+    key: "{{ simone_ssh_key }}"

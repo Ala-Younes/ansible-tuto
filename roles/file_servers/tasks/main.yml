@@ -1,0 +1,19 @@
+- name: Install samba Package
+  tags: samba,file,ubuntu
+  ansible.builtin.package:
+    name: samba
+    state: present
+
+- name: Install unzip
+  ansible.builtin.package:
+    name: unzip
+    state: present
+
+- name: Install terraform
+  ansible.builtin.unarchive:
+    src: https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: true
+    mode: 0755
+    owner: root
+    group: root

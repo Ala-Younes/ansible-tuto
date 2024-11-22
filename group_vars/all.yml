@@ -9,4 +9,7 @@ ubuntu_maria_package:
 centos_apache_package:
   - httpd
 
+centos_maria_package:
+  - mariadb
+
 simone_ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWs473uPb41DDh6ihmvWdC9xra6verOYJEjXtLM8jGm ansible"

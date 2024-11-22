@@ -2,78 +2,27 @@
 - hosts: all
   become: true
   pre_tasks:
-    - name: update repository cache (CentOS | Ubuntu)
+    - name: update repository index (CentOS | Ubuntu)
       tags: always
       ansible.builtin.package:
         update_cache: yes
       changed_when: false
       when: ansible_distribution in ["CentOS", "Ubuntu"]
 
-  tasks:
-    - name: Add ssh Key For Simone
-      tags: always
-      ansible.builtin.authorized_key:
-        user: simone
-        key: "{{ simone_ssh_key }}"
+  roles:
+    - base
 
 - hosts: web_servers
   become: true
-  tasks:
-    - name: Install Apche2 and php Packages for [Debiand and Ubuntu]
-      ansible.builtin.apt:
-        name: "{{ ubuntu_apache_package }}"
-        state: latest
-      when: ansible_distribution in ["Debian", "Ubuntu"]
-
-    - name: Install HTTPD package For CentOs
-      ansible.builtin.package:
-        name: "{{ centos_apache_package }}"
-        state: latest
-      when: ansible_distribution == "CentOS"
-
-    - name: Start HTTPD service
-      ansible.builtin.service:
-        name: httpd
-        state: started
-        enabled: yes
-      when: ansible_distribution == "CentOS"
-
-    - name: Copy Default html File For Site
-      tags: apache, apache2
-      ansible.builtin.copy:
-        src: files/default_site.html
-        dest: /var/www/html/index.html
-        owner: root
-        group: root
-        mode: 0644
+  roles:
+    - web_servers
 
 - hosts: db_servers
   become: true
-  tasks:
-    - name: Install mariadb package (Ubuntu)
-      tags: mariadb,db,ubuntu
-      ansible.builtin.apt:
-        name: "{{ ubuntu_maria_package }}"
-        state: latest
-      when: ansible_distribution == "Ubuntu"
+  roles:
+    - db_servers
 
 - hosts: file_servers
   become: true
-  tasks:
-    - name: Install samba Package
-      tags: samba,file,ubuntu
-      ansible.builtin.package:
-        name: samba
-        state: latest
-    - name: Install unzip
-      ansible.builtin.package:
-        name: unzip
-
-    - name: Install terraform
-      ansible.builtin.unarchive:
-        src: https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
-        dest: /usr/local/bin
-        remote_src: true
-        mode: 0755
-        owner: root
-        group: root
+  roles:
+    - file_servers

@@ -1,0 +1,13 @@
+- name: Install mariadb package (Ubuntu)
+  tags: mariadb,db,ubuntu
+  ansible.builtin.apt:
+    name: "{{ ubuntu_maria_package }}"
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install mariadb package (CentOs)
+  tags: mariadb,db,centos
+  ansible.builtin.dnf:
+    name: "{{ centos_maria_package }}"
+    state: latest
+  when: ansible_distribution == "CentOS"

@@ -1,0 +1,27 @@
+- name: Install Apche2 and php Packages for [Debiand and Ubuntu]
+  ansible.builtin.apt:
+    name: "{{ ubuntu_apache_package }}"
+    state: latest
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+
+- name: Install HTTPD package For CentOs
+  ansible.builtin.package:
+    name: "{{ centos_apache_package }}"
+    state: latest
+  when: ansible_distribution == "CentOS"
+
+- name: Start HTTPD service
+  ansible.builtin.service:
+    name: httpd
+    state: started
+    enabled: yes
+  when: ansible_distribution == "CentOS"
+
+- name: Copy Default html File For Site
+  tags: apache, apache2
+  ansible.builtin.copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
