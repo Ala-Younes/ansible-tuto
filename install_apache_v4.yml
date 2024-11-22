@@ -1,0 +1,38 @@
+---
+- hosts: all
+  become: true
+  vars:
+    ubuntu_packages:
+      - apache2
+      - libapache2-mod-php
+    centos_packages:
+      - httpd
+  pre_tasks:
+    - name: update repository index (CentOS | Ubuntu)
+      tags: always
+      ansible.builtin.package:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution in ["Debian", "Ubuntu", "CentOS"]
+
+  tasks:
+    # ***** Ubuntu Distibution *****
+    - name: Install Apche2 and php Packages for [Debiand and Ubuntu]
+      ansible.builtin.apt:
+        name: "{{ ubuntu_packages }}"
+        state: latest
+      when: ansible_distribution in ["Debian", "Ubuntu"]
+
+    # ***** Centos Distibution *****
+    - name: Install HTTPD package For CentOs
+      ansible.builtin.package:
+        name: "{{ centos_packages }}"
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: Start HTTPD service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_distribution == "CentOS"

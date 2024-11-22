@@ -2,32 +2,54 @@
 - hosts: all
   become: true
   pre_tasks:
-    - name: install updates (Ubuntu)
+    - name: update repository index (CentOS | Ubuntu)
       tags: always
-      ansible.builtin.apt:
-        upgrade: dist
-        update_cache: true
-      when: ansible_distribution == "Ubuntu"
+      ansible.builtin.package:
+        update_cache: yes
+      changed_when: false
+      when: ansible_distribution in ["CentOS", "Ubuntu"]
+
+  tasks:
+    - name: Create simone User
+      tags: always
+      ansible.builtin.user:
+        name: simone
+        groups: root
+
+    - name: Add ssh Key For Simone
+      tags: always
+      ansible.builtin.authorized_key:
+        user: simone
+        key: "{{ simone_ssh_key }}"
+
+    - name: Add sudoers file for simone
+      ansible.builtin.copy:
+        src: sudoers_simone.conf
+        dest: /etc/sudoers.d/simone
+        owner: root
+        group: root
 
 - hosts: web_servers
   become: true
   tasks:
-    - name: Install apache And php For Ubuntu Servers
-      tags: apache,apache2,ubuntu
+    - name: Install Apche2 and php Packages for [Debiand and Ubuntu]
       ansible.builtin.apt:
-        name:
-          - apache2
-          - libapache2-mod-php
+        name: "{{ ubuntu_apache_package }}"
         state: latest
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_distribution in ["Debian", "Ubuntu"]
 
-    - name: start apache2
-      tags: apache
+    - name: Install HTTPD package For CentOs
+      ansible.builtin.package:
+        name: "{{ centos_apache_package }}"
+        state: latest
+      when: ansible_distribution == "CentOS"
+
+    - name: Start HTTPD service
       ansible.builtin.service:
-        name: apache2
+        name: httpd
         state: started
-        enabled: true
-      when: ansible_distribution == "Ubuntu"
+        enabled: yes
+      when: ansible_distribution == "CentOS"
 
     - name: Copy Default html File For Site
       tags: apache, apache2
@@ -44,8 +66,7 @@
     - name: Install mariadb package (Ubuntu)
       tags: mariadb,db,ubuntu
       ansible.builtin.apt:
-        name:
-          - mariadb-server
+        name: "{{ ubuntu_maria_package }}"
         state: latest
       when: ansible_distribution == "Ubuntu"
 

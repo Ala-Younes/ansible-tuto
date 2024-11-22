@@ -1,0 +1,12 @@
+---
+ubuntu_apache_package:
+  - apache2
+  - libapache2-mod-php
+
+ubuntu_maria_package:
+  - mariadb-server
+
+centos_apache_package:
+  - httpd
+
+simone_ssh_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBT2sGdi4ZBOhccHMezYEeMxNdVgSIONOY8rBBkVqTqJ WSL2"
