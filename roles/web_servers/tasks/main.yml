@@ -1,24 +1,29 @@
-- name: Install Apche2 and php Packages for [Debiand and Ubuntu]
-  ansible.builtin.apt:
-    name: "{{ ubuntu_apache_package }}"
-    state: latest
-  when: ansible_distribution in ["Debian", "Ubuntu"]
-
-- name: Install HTTPD package For CentOs
+- name: Install Apche2 and php Packages for [CentOS and Ubuntu]
   ansible.builtin.package:
-    name: "{{ centos_apache_package }}"
+    name:
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
-  when: ansible_distribution == "CentOS"
+  when: ansible_distribution in ["CentOS", "Ubuntu"]
 
-- name: Start HTTPD service
+- name: Start HTTPD service (CentOS)
   ansible.builtin.service:
-    name: httpd
+    name: "{{ centos_apache_service }}"
     state: started
     enabled: yes
   when: ansible_distribution == "CentOS"
 
+- name: change e-mail address for admin
+  tags: apache,centos,httpd
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: "^ServerAdmin"
+    line: ServerAdmin somebody@somewhere.com
+  when: ansible_distribution == "CentOS"
+  notify: restart_apache
+
 - name: Copy Default html File For Site
-  tags: apache, apache2
+  tags: apache
   ansible.builtin.copy:
     src: default_site.html
     dest: /var/www/html/index.html
