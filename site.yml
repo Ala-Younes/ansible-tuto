@@ -2,7 +2,7 @@
 - hosts: all
   become: true
   pre_tasks:
-    - name: update repository index (CentOS | Ubuntu)
+    - name: update repository cache (CentOS | Ubuntu)
       tags: always
       ansible.builtin.package:
         update_cache: yes
@@ -10,24 +10,11 @@
       when: ansible_distribution in ["CentOS", "Ubuntu"]
 
   tasks:
-    - name: Create simone User
-      tags: always
-      ansible.builtin.user:
-        name: simone
-        groups: root
-
     - name: Add ssh Key For Simone
       tags: always
       ansible.builtin.authorized_key:
         user: simone
         key: "{{ simone_ssh_key }}"
-
-    - name: Add sudoers file for simone
-      ansible.builtin.copy:
-        src: sudoers_simone.conf
-        dest: /etc/sudoers.d/simone
-        owner: root
-        group: root
 
 - hosts: web_servers
   become: true
